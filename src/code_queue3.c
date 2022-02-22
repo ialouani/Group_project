@@ -19,7 +19,8 @@ struct rule{
 
 
 struct rules{
-  struct rule rs[MAX_RULES];};
+  struct rule rs[MAX_RULES];
+};
 
 struct coord{
   int abs;
@@ -39,60 +40,70 @@ struct file f;
 struct file ff;
 
 void file_init(){//remplir la file avec un premier element de n'importe quoi
-  f.xy.abs=-1;
-  f.xy.ord=-1;//changements sur un couple imaginaire.
-  f.regle=NULL;
-  f.next=NULL;
-  return;}//la file vide(<=>1;2(propositions))
+  f.xy.abs = -1;
+  f.xy.ord = -1;//changements sur un couple imaginaire.
+  f.regle = NULL;
+  f.next = NULL;
+  return;
+}//la file vide(<=>1;2(propositions))
 //est celle qui a 1 element : (-1,-1) NULL
 //i.e. appliquer rien en un couple imaginaire.
 
 
 void file_init2(){//remplir la file avec un premier element de n'importe quoi
-  ff.xy.abs=-1;
-  ff.xy.ord=-1;//changements sur un couple imaginaire.
-  ff.regle=NULL;
-  ff.next=NULL;
-  return;}//la file vide(<=>1;2(propositions))
+  ff.xy.abs = -1;
+  ff.xy.ord = -1;//changements sur un couple imaginaire.
+  ff.regle = NULL;
+  ff.next = NULL;
+  return;
+}//la file vide(<=>1;2(propositions))
 //est celle qui a 1 element : (-1,-1) NULL
 //i.e. appliquer rien en un couple imaginaire.
 
 void afficher_premier_elt(struct file* f){
-  if(f->next==NULL){
-    printf("(%d,%d) -- %p\n",f->xy.abs,f->xy.ord,f->regle);}
+  if(f->next == NULL){
+    printf("(%d,%d) -- %p\n", f->xy.abs, f->xy.ord, f->regle);
+  }
   else{//f->next a afficher
-      printf("(%d,%d) -- %p\n",f->next->xy.abs,f->next->xy.ord,f->next->regle);
+      printf("(%d,%d) -- %p\n", f->next->xy.abs, f->next->xy.ord, f->next->regle);
   }
 }
 
 void ajouter_elt(struct file* f, struct coord co, struct rule* r){
-  struct file* pointeur=f;//f->next accessible car f!=NULL ici.
+  struct file* pointeur = f;//f->next accessible car f!=NULL ici.
     while(pointeur->next!=NULL){
-      pointeur=pointeur->next;}
-    pointeur->next=malloc(sizeof(struct file));
-    (pointeur->next)->xy=co;
-    (pointeur->next)->regle=r;
-    (pointeur->next)->next=NULL;
+      pointeur=pointeur->next;
+    }
+    pointeur->next = malloc(sizeof(struct file));
+    (pointeur->next)->xy = co;
+    (pointeur->next)->regle = r;
+    (pointeur->next)->next = NULL;
 }
 
 
 
 void supprimer_premier_elt(struct file* f){
-  if(f->next==NULL){//la file est vide elle est egale a -1,-1 NULL.
-    return;}
+  if(f->next == NULL){//la file est vide elle est egale a -1,-1 NULL.
+    return;
+  }
     //f->next!=NULL
-  else if(f->next->next==NULL){//1 element significatif dans la file.
-    f->next=NULL;return;}
+  else if(f->next->next == NULL){//1 element significatif dans la file.
+    f->next = NULL;
+    return;
+  }
   else{//au moins de bons elements dans la file.
-    f->next=f->next->next;return;}}
+    f->next = f->next->next;
+    return;
+  }
+}
 
 
 
 void afficher_file(struct file* f){
-  struct file* pointeur=f;
-  while(pointeur!=NULL){
-    printf("(%d,%d);%p -- ",pointeur->xy.abs,pointeur->xy.ord,pointeur->regle); 
-    pointeur=pointeur->next;
+  struct file* pointeur = f;
+  while(pointeur != NULL){
+    printf("(%d,%d);%p -- ", pointeur->xy.abs, pointeur->xy.ord, pointeur->regle); 
+    pointeur = pointeur->next;
   }
   printf("\n");
 }

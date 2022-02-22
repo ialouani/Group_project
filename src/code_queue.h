@@ -14,7 +14,7 @@
 struct rule{
   int couleurs_voisins_utiles[9];
   int nouvelle_couleur[LEN_MAX+2];
-int own_color;
+  int own_color;
   struct rule* next;
 };
 
@@ -23,12 +23,13 @@ struct rule rules1;
 
 struct rule_index{
   struct rule rules;
-  int xy[3];//structure representant le couple (r,(x,y)).
+  int xy[3]; //structure representant le couple (r,(x,y)).
 };
 
 struct file{
   struct rule_index couple_rxy[HEIGHT*WIDTH+1];
-};//la file sera une structure qui se resume en un tableau de structures 
+};
+//la file sera une structure qui se resume en un tableau de structures 
 //ou chaque structure est une valeur typée de struct rule_index
 
 

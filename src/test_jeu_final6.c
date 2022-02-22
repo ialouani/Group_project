@@ -63,7 +63,7 @@ void world_init();
 
 
 void game(int nombre_de_fois){
-  printf("%d %d\n",HEIGHT,WIDTH);
+  printf("%d %d\n",WIDTH,HEIGHT);
   print_created_random_world(&ww);
   int number_rules=rules_count();
   for(int k;k<nombre_de_fois;k++){
@@ -227,16 +227,34 @@ int main(int argc, char* argv[]){
 
 
 
+  
+ unsigned int seed=0;
+ int nombre_images=0;
+ char optstring[]="ms";
+ int c;
+ while((c=getopt(argc,argv,optstring))!=EOF){//pas arrivee a la fin des arguments sur la ligne de commande apres le ./project::
+   switch(c){
+   case 'm'://<=>-m
+     nombre_images=atoi(argv[optind]);//argv[optind] represente -m ?suivant 
+   case 's':
+     seed=(unsigned int)atoi(argv[optind]);//meme chose (seed et de type unsigned int)
+   }}
+ if(nombre_images==0) nombre_images=10;
+ if(seed==0) seed=rand();
+ srand(seed);
+
 
 
   
   file_init();
+
+  /*
   int iterations;int c;char optstring[]="m";
   while((c=getopt(argc,argv,optstring))!=EOF){
     switch(c){
     case 'm':
       iterations=atoi(argv[optind]);
-      break;}}
-  game(iterations);
+      break;}}*/
+  game(nombre_images);
   return 0;}
 

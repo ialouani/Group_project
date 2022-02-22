@@ -157,6 +157,32 @@ int main(int argc, char* argv[]){
   world_init();
   for(int ij=0; ij<HEIGHT*WIDTH; ij++){
     ww.t[ij] = (rand()%2)*BLANC;}
+  int tab[WIDTH*HEIGHT];int h=0;
+  for(int i=0;i<2*HEIGHT/3;i++){
+    for(int j=0;j<WIDTH/3;j++){
+      ww.t[i*WIDTH+j]=BLANC;int limite=HEIGHT*WIDTH;
+      ww.t[(i*WIDTH+j+1)%limite]=BLANC;
+      ww.t[(i*WIDTH+j+2)%limite]=BLANC;
+      ww.t[(i*WIDTH+j+WIDTH)%limite]=BLANC;
+      ww.t[(i*WIDTH+j+WIDTH+WIDTH+1)%limite]=BLANC;
+      tab[h]=i*WIDTH+j;h++;
+      tab[h]=(i*WIDTH+j+1)%limite;h++;
+      tab[h]=(i*WIDTH+j+2)%limite;h++;
+      tab[h]=(i*WIDTH+j+WIDTH)%limite;h++;
+      tab[h]=(i*WIDTH+j+WIDTH+WIDTH+1)%limite;h++;
+}
+  }
+  for(int k=h;k<WIDTH*HEIGHT;k++){
+    tab[k]=0;
+  }
+  int contient(int index,int tab[],int len){
+    for(int h=0;h<len;h++){
+      if(tab[h]==index) return 1;
+    }
+    return 0;
+  }
+  for(int x=0;x<WIDTH*HEIGHT;x++){
+    if(!contient(x,tab,HEIGHT*WIDTH)) ww.t[x]=NOIR;}
   int c;
   int iterations;
   char optstr[]="m";

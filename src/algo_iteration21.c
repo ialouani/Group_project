@@ -9,7 +9,7 @@
 #define MAX_RULES 50 
 #define BLEU 255
 #define BLANC 16777215
-#define JAUNE 65535
+#define JAUNE 16776990
 #define ROUGE 16711680
 #define VERT 32768
 #define NB_VOISINS 9
@@ -54,29 +54,21 @@ void create_random_world(struct world* monde, unsigned int seed);
 void print_created_random_world(struct world* monde);
 void world_init();
 
-int index(int i, int j){
-    return i*WIDTH+j;
+
+int pas_meme(struct world w1, struct world w2){
+  for(int f=0;f<HEIGHT*WIDTH;f++){
+    if(w1.t[f]!=w2.t[f]) return 1;
   }
-
-
-void vrai(int* xdx, int* ydy){
-  	if(*xdx >= HEIGHT){
-	   *xdx=*xdx%HEIGHT;
-	}
-	else if(*xdx < 0){
-	  *xdx=HEIGHT-*xdx%HEIGHT;
-	}
-	
-        if(*ydy >= WIDTH){
-	  *ydy=*ydy%WIDTH;
-	}
-	else if(*ydy < 0){
-	  *ydy = WIDTH-*ydy%WIDTH;
-	}
+  return 0;
 }
 
+
+
 void algo_iteration_4(struct world* w, struct rules* regles, unsigned int tours){
-  
+  struct world* ww2=w;
+ unsigned int index(int i, int j){
+    return i*WIDTH+j;
+  }
  int combien(struct coord2 tab[], struct coord coordos, int length){
    int compteur=0;int compteur2=0;
    while(compteur2 < length){
@@ -101,7 +93,6 @@ void algo_iteration_4(struct world* w, struct rules* regles, unsigned int tours)
 	    ajouter_elt(&ff, xy, regle);
 	    h++;
 	    break;
-	   
 	  }
 	}
       }
@@ -120,6 +111,7 @@ void algo_iteration_4(struct world* w, struct rules* regles, unsigned int tours)
       new_indices2[p].ord=-3;
       p++;
      }
+  
     for(int l=0; l<h; l++){
       int x = (ptr->next)->xy.abs;
       int y = (ptr->next)->xy.ord;
@@ -133,17 +125,29 @@ void algo_iteration_4(struct world* w, struct rules* regles, unsigned int tours)
       }
       int m=0;
       int v=0;
-      while(m<len && rule_change_to(ptr->next->regle,m) != -1){
+      while(m<len){
+	if(rule_change_to(ptr->next->regle,m) != -1){
 	int xdx = x+rule_change_dx(ptr->next->regle,m);
 	int ydy = y+rule_change_dy(ptr->next->regle,m);
 	
-	vrai(&xdx,&ydy);
+	if(xdx >= HEIGHT){
+	   xdx=xdx%HEIGHT;
+	}
+	if(xdx < 0){
+	  xdx=HEIGHT-xdx%HEIGHT;
+	}
+        if(ydy >= WIDTH){
+	  ydy=ydy%WIDTH;
+	}
+	if(ydy < 0){
+	  ydy = WIDTH-ydy%WIDTH;
+	}
 	if(w->t[index(xdx,ydy)] == 0){
 	  deplacements[v].x_y.abs = xdx;
 	  deplacements[v].x_y.ord = ydy;
 	  deplacements[v].color = rule_change_to(ptr->next->regle,m);
 	  v++;
-	}
+	}}
 	m++;
       }
       if(v!=0){
@@ -174,13 +178,11 @@ void algo_iteration_4(struct world* w, struct rules* regles, unsigned int tours)
       
       if(new_indices[u].color != -2){
 	struct coord new={x_dx,y_dy};
-	vrai(&x_dx,&y_dy);
 	int nbr_fois=combien(new_indices,new,h);
 	
-	if(nbr_fois == 1){
-	  vrai(&xx,&yy);vrai(&x_dx,&y_dy);
+	if(nbr_fois == 1 && new_indices[u].color != BLANC && w->t[index(x_dx,y_dy)]==0){
 	  w->t[index(xx,yy)] = 0;
-	  w->t[index(x_dx,y_dy)] = new_indices[u].color;
+	   w->t[index(x_dx,y_dy)] = new_indices[u].color;
 	}
 	else{
 	  int random_indice = (rand()%(nbr_fois+1))+1;
@@ -195,9 +197,9 @@ void algo_iteration_4(struct world* w, struct rules* regles, unsigned int tours)
 	  }
 	  int new_x = new_indices2[cpt-1].abs;
 	  int new_y = new_indices2[cpt-1].ord;
-	  vrai(&new_x,&new_y);vrai(&x_dx,&y_dy);
-	  w->t[index(new_x,new_y)] = 0;
-	  w->t[index(x_dx,y_dy)] = new_indices[cpt-1].color;
+	  if(new_indices[cpt-1].color != BLANC &&   w->t[index(x_dx,y_dy)] ==0){
+	    w->t[index(new_x,new_y)] = 0;
+	    w->t[index(x_dx,y_dy)] = new_indices[cpt-1].color;}
 	}
       }
 
@@ -211,6 +213,7 @@ void algo_iteration_4(struct world* w, struct rules* regles, unsigned int tours)
       ptr2 = ptr2->next;
     }
     print_created_random_world(w);
+    if(pas_meme(*w,*ww2)) return;  
     file_init();
     file_init2();
   }

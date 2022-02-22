@@ -1,5 +1,5 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 //on doit inclure le fichier rule.h pour pouvoir implementer les modifications.
 #include "rule.h"
 //ça inclut world.h
@@ -25,66 +25,70 @@ struct rule{
 //couleur.
 
 struct rules{
-  struct rule rs[MAX_RULES];};
+  struct rule rs[MAX_RULES];
+};
 
 struct world ww;
 
 void create_random_world(struct world* monde, unsigned int seed){
   srand(seed);
-  for(int i=0;i<HEIGHT*WIDTH;i++){
-        (monde->t)[i]=rand()%(ENTIER_MAX+1);
+  for(int i=0; i<HEIGHT*WIDTH; i++){
+        (monde->t)[i] = rand()%(ENTIER_MAX+1);
   }
-  return;
 }
 
 void print_created_random_world(struct world* monde){
   printf("#\n");
-  for(int i=0;i<HEIGHT*WIDTH;i++){
-    printf("%d ",(monde->t)[i]);
-    if((i+1)%WIDTH==0) printf("\n");
+  for(int i=0; i<HEIGHT*WIDTH; i++){
+    printf("%d ", (monde->t)[i]);
+    if((i+1)%WIDTH==0){
+      printf("\n");
+    }
   }
 }
 
 void world_init(){
-  unsigned int seed=time(NULL);
+  unsigned int seed = time(NULL);
   create_random_world(&ww,seed);
-  return ;}
+}
 
 
 //fonctions de rule.c
 //rules_init();
 struct rules regles;//structure contenant un tableau de regles.
 void rules_init(){//initialise le tableau de regles
-  int k=0;
-  while(k<MAX_RULES){//initialiser la k-ième regle
+  for(int k=0; k<MAX_RULES; k++){
     //regles.rs[k]
     //lui affecter un voisinage d'abord
-    int h=0;
-    while(h<8){
-      regles.rs[k].voisins[h]=-1;//initialisation comme ceci: le voisinage ne nous interesse pas
-      h++;}
+    for(int h=0; h<8; h++){         
+      regles.rs[k].voisins[h] = -1;//initialisation comme ceci: le voisinage ne nous interesse pas
+    }
     //puis faire la meme chose avec own_color
-    regles.rs[k].own_color=-1;
-    int l=0;
-    while(l<LEN_MAX){
-      regles.rs[k].new_color[l]=-1;l++;}
+    regles.rs[k].own_color = -1;
+    for(int l=0; l<LEN_MAX; l++){         
+      regles.rs[k].new_color[l] = -1;
+    }
     //initialiser de meme les dx,dy avec que des 0;ca sera mieux(<=> aucun deplacement)
-    int p=0;
-    while(p<LEN_MAX){
-      regles.rs[k].dx[p]=0;regles.rs[k].dy[p]=0;p++;}
-    k++;}
+    for(int p=0; p<LEN_MAX; p++){
+      regles.rs[k].dx[p] = 0;
+      regles.rs[k].dy[p]=0;
+    }
+  }
 }
   
 unsigned int rules_count(){//compte le nombre de regles
   unsigned int i=0;
   //on opere sur regles
   while(regles.rs[i].new_color[0]!=-1){
-    i++;}//l'indeterminisme mais forcement la 1ere probabibilite non ss_triviale.
-  return i;}
+    i++;
+  }//l'indeterminisme mais forcement la 1ere probabibilite non ss_triviale.
+  return i;
+}
 
 struct rule* rule_get(unsigned int i){
   //recuperer dans regles (de type struct rules) la i-ème regle.
-  return &(regles.rs[i]);}//regle en indice i dans le tableau de regles regles.rs[MAX_RULES].
+  return &(regles.rs[i]);
+}//regle en indice i dans le tableau de regles regles.rs[MAX_RULES].
 
 
 //maintenant, la fonction: rule_match: prend un *r,*w et prouve si ça marche
@@ -93,27 +97,33 @@ struct rule* rule_get(unsigned int i){
 
 unsigned int rule_num_changes(const struct rule* r){//le nombre de couleurs futures possibles relatives
   //a une seule regle.
-  int l=0;
+  int l = 0;
   while(r->new_color[l]!=-1){
-    l++;}
-  return l;}//ça compte le nombre de couleurs possibles a affecter.
+    l++;
+  }
+  return l;
+}//ça compte le nombre de couleurs possibles a affecter.
 
 unsigned int rule_change_to(const struct rule* r, unsigned int idx){
   //renvoie la couleur suivant le choix numero idx.
-  return r->new_color[idx];}//idx<rule_num_changes(r).
+  return r->new_color[idx];
+}//idx<rule_num_changes(r).
 
 int rule_change_dx(const struct rule* r, unsigned int idx){
   //prend une regle de type struct rule et renvoie le idx-ième element possible
-  return r->dx[idx];}
+  return r->dx[idx];
+}
     
 int rule_change_dy(const struct rule* r, unsigned int idy){
-  return r->dy[idy];}
+  return r->dy[idy];
+}
 //a compiler avec rule.c pour avoir la version du matching specifiee dans le fichier rule.h.
 
 int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsigned int j){//si ca marche pour une seule regle (pseudo-boucle)
   int index(unsigned int k1, unsigned int k2){
-    return k1*WIDTH+k2;}
-  unsigned int color=w->t[index(i,j)];//couleur de la cellule (x,y).
+    return k1*WIDTH+k2;
+  }
+  unsigned int color = w->t[index(i,j)];//couleur de la cellule (x,y).
   //la le voisinage est important (pour le jeu de la vie non..)
   //recuperer tous les voisinages de cette cellule.
   /*int i2=((i-1)<0)? HEIGHT-1 :i-1;
@@ -143,21 +153,18 @@ int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsi
   colors[5]=w->t[index(i3,j2)];
   colors[6]=w->t[index(i3,j)];
   colors[7]=w->t[index(i3,j3)];
-  if(color!=r->own_color)
-    return 0;
-  /*
-  for(int l=0;l<8;l++)
-     printf("voisin %d , couleur %d\n", l, colors[l]);
-  */
-  int l=0;
   
-  while(l<8){
-    if(r->voisins[l]!=-1){//couleur nous interesse(et donc a tester)
-      if(colors[l]!=r->voisins[l])
+  if(color!=r->own_color){
+    return 0;
+  }
+  
+  for(int l=0; l<8; l++){
+    if(r->voisins[l] != -1){  //couleur nous interesse(et donc a tester)
+      if(colors[l] != r->voisins[l]){
 	return 0;
-     
+      }
     }
-    l++;}
+  }
   return 1;
 }
 
